@@ -1,0 +1,76 @@
+<!-- Styles -->
+<style>
+#chartdiv {
+  width: 100%;
+  height: 500px;
+}
+</style>
+
+<!-- Resources -->
+<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+
+<!-- Chart code -->
+<script>
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+var chart = am4core.create("chartdiv", am4charts.XYChart);
+
+chart.data = [{ "entidad": "Aguascalientes", "value": 4796},{ "entidad": "Baja California", "value": 8905},{ "entidad": "Baja California Sur", "value": 2321},{ "entidad": "Campeche", "value": 1596},{ "entidad": "Chiapas", "value": 3489},{ "entidad": "Chihuahua", "value": 3891},{ "entidad": "Ciudad de Mexico", "value": 61725},{ "entidad": "Coahuila", "value": 7560},{ "entidad": "Colima", "value": 653},{ "entidad": "Durango", "value": 2404},{ "entidad": "Guanajuato", "value": 13100},{ "entidad": "Guerrero", "value": 3972},{ "entidad": "Hidalgo", "value": 3691},{ "entidad": "Jalisco", "value": 13184},{ "entidad": "Mexico", "value": 35752},{ "entidad": "Michoacan", "value": 6773},{ "entidad": "Morelos", "value": 3199},{ "entidad": "Nayarit", "value": 1786},{ "entidad": "Nuevo Leon", "value": 12812},{ "entidad": "Oaxaca", "value": 3520},{ "entidad": "Puebla", "value": 8237},{ "entidad": "Queretaro", "value": 2727},{ "entidad": "Quintana Roo", "value": 3598},{ "entidad": "San Luis Potosi", "value": 4957},{ "entidad": "Sinaloa", "value": 7354},{ "entidad": "Sonora", "value": 5304},{ "entidad": "Tabasco", "value": 10019},{ "entidad": "Tamaulipas", "value": 7711},{ "entidad": "Tlaxcala", "value": 3219},{ "entidad": "Veracruz", "value": 7930},{ "entidad": "Yucatan", "value": 5167},{ "entidad": "Zacatecas", "value": 1655} ];
+
+chart.padding(40, 40, 40, 40);
+
+var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+categoryAxis.renderer.grid.template.location = 0;
+categoryAxis.dataFields.category = "entidad";
+categoryAxis.renderer.minGridDistance = 60;
+categoryAxis.renderer.inversed = true;
+categoryAxis.renderer.grid.template.disabled = true;
+
+var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+valueAxis.min = 0;
+valueAxis.extraMax = 0.1;
+//valueAxis.rangeChangeEasing = am4core.ease.linear;
+//valueAxis.rangeChangeDuration = 1500;
+
+var series = chart.series.push(new am4charts.ColumnSeries());
+series.dataFields.categoryX = "entidad";
+series.dataFields.valueY = "value";
+series.tooltipText = "{valueY.value}"
+series.columns.template.strokeOpacity = 0;
+series.columns.template.column.cornerRadiusTopRight = 10;
+series.columns.template.column.cornerRadiusTopLeft = 10;
+//series.interpolationDuration = 1500;
+//series.interpolationEasing = am4core.ease.linear;
+var labelBullet = series.bullets.push(new am4charts.LabelBullet());
+labelBullet.label.verticalCenter = "bottom";
+labelBullet.label.dy = -10;
+labelBullet.label.text = "{values.valueY.workingValue.formatNumber('#.')}";
+
+chart.zoomOutButton.disabled = true;
+
+// as by default columns of the same series are of the same color, we add adapter which takes colors from chart.colors color set
+series.columns.template.adapter.add("fill", function (fill, target) {
+ return chart.colors.getIndex(target.dataItem.index);
+});
+
+setInterval(function () {
+ am4core.array.each(chart.data, function (item) {
+   item.visits += Math.round(Math.random() * 200 - 100);
+   item.visits = Math.abs(item.visits);
+ })
+ chart.invalidateRawData();
+}, 2000)
+
+categoryAxis.sortBySeries = series;
+
+}); // end am4core.ready()
+</script>
+
+<!-- HTML -->
+<div id="chartdiv"></div>
